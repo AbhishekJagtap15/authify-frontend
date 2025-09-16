@@ -13,7 +13,7 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const { backendURL } = useContext(AppContext);
+  const { backendURL , setIsLoggedIn, getUserData} = useContext(AppContext);
   const navigate = useNavigate();
 
   const onSubmitHandler = async (e) => {
@@ -34,6 +34,15 @@ const Login = () => {
           toast.error("Email already exists.");
         }
       } else {
+        const response=await axios.post(`${backendURL}/login`, { email, password });
+        if (response.status === 200) {
+          setIsLoggedIn(true);
+          getUserData();
+          navigate("/");
+          toast.success("Logged in successfully.");
+        } else {
+          toast.error("Invalid credentials.");
+        }
       }
     } catch (err) {
       toast.error(err.response.data.message);
